@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LocationVehicules
 {
-    class Vehicules
+    public class Vehicule
     {
         public string Immatriculation { get; set; }
         public string Marque { get; set; }
