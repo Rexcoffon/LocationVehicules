@@ -6,13 +6,13 @@ namespace LocationVehicules.Specs.Features.Fake
 {
     public class FakeDataLayer : IDataLayer
     {
-        public List<Client> Clients { get; set; }
+        public List<Customer> Customers { get; set; }
 
         public List<Vehicule> Vehicules  { get; set; }
 
         public FakeDataLayer()
         {
-            this.Clients = new List<Client>();
+            this.Customers = new List<Customer>();
 
             this.Vehicules = new List<Vehicule>();
         }

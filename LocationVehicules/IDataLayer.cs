@@ -6,7 +6,7 @@ namespace LocationVehicules
 {
     public interface IDataLayer
     {
-        List<Client> Clients { get; }
+        List<Customer> Customers { get; }
 
         List<Vehicule> Vehicules { get; }
     }

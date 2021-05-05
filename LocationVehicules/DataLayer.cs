@@ -6,13 +6,13 @@ namespace LocationVehicules
 {
     internal class DataLayer : IDataLayer
     {
-        public List<Client> Clients { get; private set; }
+        public List<Customer> Customers { get; private set; }
 
         public List<Vehicule> Vehicules { get; private set; }
 
         public DataLayer()
         {
-            Clients = new List<Client>();
+            Customers = new List<Customer>();
             Vehicules = new List<Vehicule>();
         }
     }

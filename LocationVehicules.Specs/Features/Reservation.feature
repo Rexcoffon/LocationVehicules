@@ -19,6 +19,7 @@ Background:
 		| Dusse   | Jean-Claude | 11/08/1952    | 010101    | jcd      | toto     |
 		| Cruchot | Ludovic     | 04/01/1971    | 546545    | lcruchot | tata     |
 
+# Connection
 Scenario: Client connection - Username not recognized
 	Given my username is "bob"
 	And my password is "titi"
@@ -38,3 +39,24 @@ Scenario: Client connection - Username recognized but incorrect password
 	When I try to connect to my account
 	Then the connection is refused
 	And the error message is "Incorrect password"
+
+# Reservation
+Scenario: Client reservation - simple revervation without check and billing
+	Given my username is "jcd"
+	And my password is "toto"
+	When I try to connect to my account
+	Then the connection is established
+	Given Select these reservation dates
+		| StartDate  | EndDate    |
+		| 05/05/2021 | 10/05/2021 |
+	When Validate reservation dates
+	Then The vehicle list should be
+		| Immat   | Marque  | Modele | Couleur | PrixRes | PrixKilo | Cv |
+		| nf552cd | Citroen | C3     | Blanche | 150     | 0,40     | 5  |
+		| as202lk | Renault | Clio   | Rouge   | 155     | 0.39     | 5  |
+		| ef168ml | Audi    | A3     | Grisse  | 220     | 0.45     | 7  |
+	Given the selected vehicle is "as202lk"
+	When Create a reservation
+	Then The reservation should be
+		| Nom   | Prenom      | Immat   | StartDate  | EndDate    |
+		| Dusse | Jean-Claude | as202lk | 05/05/2021 | 10/05/2021 |
