@@ -57,7 +57,7 @@ namespace LocationVehicules.Specs.Steps
                     Nom = row[0],
                     Prenom = row[1],
                     DateNaissance = DateTime.Parse(row[2]),
-                    NumPermis = int.Parse(row[3]),
+                    NumPermis = row[3],
                     Username = row[4],
                     Password = row[5],
                 });
@@ -144,7 +144,8 @@ namespace LocationVehicules.Specs.Steps
         [When(@"Create a reservation")]
         public void WhenCreateAReservation()
         {
-            _reservation = _target.CreateReservation();
+            _lastErrorMessage = _target.CreateReservation();
+            _reservation = _target.Reservation;
         }
 
         [Then(@"The reservation should be")]
@@ -158,9 +159,18 @@ namespace LocationVehicules.Specs.Steps
                 Vehicule = _fakeDataLayer.Vehicules.FirstOrDefault(_ => _.Immatriculation == data[2]),
                 StartDate = DateTime.Parse(data[3]),
                 EndDate = DateTime.Parse(data[4]),
+                EstimateKm = int.Parse(data[5]),
+                Price = double.Parse(data[6]),
             };
 
             _reservation.Should().BeEquivalentTo(reservationData);
         }
+
+        [Given(@"estimate the number of km to (.*)")]
+        public void GivenEstimateTheNumberOfKmTo(int estimateKm)
+        {
+            _target.SetEstimateKm(estimateKm);
+        }
+
     }
 }

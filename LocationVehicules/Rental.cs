@@ -15,6 +15,9 @@ namespace LocationVehicules
         private DateTime StartDate { get; set; }
         private DateTime EndDate { get; set; }
         private string LicenceNum { get; set; }
+        private int EstimateKm { get; set; }
+
+        public Reservation Reservation { get; set; }
 
         public Rental()
         {
@@ -60,7 +63,22 @@ namespace LocationVehicules
 
         public List<Vehicule> GetAvailableVehicules()
         {
-            return _dataLayer.Vehicules;
+            List<Vehicule> result = new List<Vehicule>();
+            int age = GetAge(Client.DateNaissance);
+            if (age < 21)
+            {
+                result = _dataLayer.Vehicules.FindAll(v => v.Cv <= 8);
+            }
+            else if (age <= 25 && age >= 21)
+            {
+                result = _dataLayer.Vehicules.FindAll(v => v.Cv <= 13);
+            }
+            else
+            {
+                result = _dataLayer.Vehicules;
+            }
+
+            return result;
         }
 
         public void SetSelectedVehicule(string licenceNum)
@@ -68,15 +86,52 @@ namespace LocationVehicules
             LicenceNum = licenceNum;
         }
 
-        public Reservation CreateReservation()
+        public string CreateReservation()
         {
-            return new Reservation
+            string error = string.Empty;
+            if (GetAge(Client.DateNaissance) >= 18)
             {
-                Customer = Client,
-                Vehicule = _dataLayer.Vehicules.FirstOrDefault(_ => _.Immatriculation == LicenceNum),
-                StartDate = StartDate,
-                EndDate = EndDate,
-            };
+                if (!string.IsNullOrEmpty(Client.NumPermis))
+                {
+                    var vehicule = _dataLayer.Vehicules.FirstOrDefault(_ => _.Immatriculation == LicenceNum);
+                    double price = vehicule.PrixRes + vehicule.PrixKilo * EstimateKm;
+
+                    Reservation = new Reservation
+                    {
+                        Customer = Client,
+                        Vehicule = vehicule,
+                        StartDate = StartDate,
+                        EndDate = EndDate,
+                        EstimateKm = EstimateKm,
+                        Price = price,
+                    };
+                }
+                else
+                {
+                    error = "Driver must have a license";
+                }
+            }
+            else
+            {
+                error = "Driver is too young";
+            }
+
+            return error;
+        }
+
+        private int GetAge(DateTime dateOfBirth)
+        {
+            var today = DateTime.Today;
+
+            var a = (today.Year * 100 + today.Month) * 100 + today.Day;
+            var b = (dateOfBirth.Year * 100 + dateOfBirth.Month) * 100 + dateOfBirth.Day;
+
+            return (a - b) / 10000;
+        }
+
+        public void SetEstimateKm(int estimateKm)
+        {
+            EstimateKm = estimateKm;
         }
     }
 }
